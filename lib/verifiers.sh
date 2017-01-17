@@ -3,10 +3,11 @@
 # DESCRIPTION
 # Defines verification/validation functions.
 
-# Verifies Homebrew software exists.
+# Verifies if installed software are effectively present.
 # Parameters:
-# $1 = The file name.
-verify_homebrew() {
+# $1 = The software name.
+# $2 = The installed software names list.
+verify_installed_software_presence() {
   local application="$1"
   local applications="$2"
 
@@ -14,36 +15,62 @@ verify_homebrew() {
     printf " - Missing: $application\n"
   fi
 }
-export -f verify_homebrew
+export -f verify_installed_software_presence
 
 # Checks for missing Homebrew software.
 verify_homebrews() {
-  printf "Checking Homebrew software...\n"
+  printf "Checking Homebrew software presence...\n"
 
   local applications="$(brew list)"
 
-  while read line; do
-    # Skip blank or comment lines.
-    if [[ "$line" == "brew install"* ]]; then
-      local application=$(printf "$line" | awk '{print $3}')
-
-      # Exception: "gpg" is the binary but is listed as "gnugp".
-      if [[ "$application" == "gpg" ]]; then
-        application="gnupg"
-      fi
-
-      # Exception: "hg" is the binary but is listed as "mercurial".
-      if [[ "$application" == "hg" ]]; then
-        application="mercurial"
-      fi
-
-      verify_homebrew "$application" "${applications[*]}"
+  for software in "${HOMEBREW_SOFTWARE[@]}"
+  do
+    # Exception: "gpg" is the binary but is listed as "gnugp".
+    if [[ "$software" == "gpg" ]]; then
+      software="gnupg"
     fi
-  done < "$MAC_OS_CONFIG_PATH/bin/install_homebrew"
+
+    # Exception: "hg" is the binary but is listed as "mercurial".
+    if [[ "$software" == "hg" ]]; then
+      software="mercurial"
+    fi
+
+    verify_installed_software_presence "$software" "${applications[*]}"
+  done
 
   printf "Homebrew check complete.\n"
 }
 export -f verify_homebrews
+
+# Checks for missing Homebrew Cask apps.
+verify_casks() {
+  printf "Checking Homebrew Cask apps presence...\n"
+
+  local applications="$(brew cask list)"
+
+  for cask_app in "${CASK_APPS[@]}"
+  do
+    verify_installed_software_presence "$cask_app" "${applications[*]}"
+  done
+
+  printf "Homebrew Cask apps check complete.\n"
+}
+export -f verify_casks
+
+# Checks for missing Mac App Store apps.
+verify_mas() {
+  printf "Checking Mac App Store apps presence...\n"
+
+  local applications="$(mas list)"
+
+  for mas_app in "${MAS_APPS[@]}"
+  do
+    verify_installed_software_presence "$mas_app" "${applications[*]}"
+  done
+
+  printf "Mac App Store apps check complete.\n"
+}
+export -f verify_mas
 
 # Verifies application exists.
 # Parameters:

@@ -1,0 +1,19 @@
+#! /usr/bin/env bash
+
+# DESCRIPTION
+# Restore ssh files from backup directory and apply appropriate rights
+# on the restored directories and files.
+
+# SETTINGS
+set -o nounset
+set -o errexit
+set -o pipefail
+IFS=$'\n\t'
+SCRIPT_PATH="$MAC_OS_CONFIG_PATH/bin/restore_ssh_files"
+
+# EXECUTION
+if [[ -x "$SCRIPT_PATH" ]]; then
+  "$SCRIPT_PATH"
+else
+  printf "WARNING: Restore ssh script does not exist or is not executable.\n"
+fi

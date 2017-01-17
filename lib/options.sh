@@ -16,6 +16,10 @@ process_option() {
       bin/install_dev_tools;;
     'h')
       bin/install_homebrew;;
+    'n')
+      bin/install_npm_modules;;
+    'H')
+      bin/install_cask;;
     'm')
       bin/install_app_store;;
     'a')
@@ -26,22 +30,32 @@ process_option() {
       bin/apply_default_settings;;
     's')
       bin/setup_software;;
+    'p')
+      bin/install_php;;
     'i')
       caffeinate_machine
       bin/apply_basic_settings
       bin/install_dev_tools
       bin/install_homebrew
+      bin/install_npm_modules
+      bin/install_cask
       bin/install_app_store
       bin/install_applications
       bin/install_extensions
       bin/apply_default_settings
       bin/setup_software
+      bin/install_php
+      bin/restore_ssh_files
       clean_work_path;;
     'R')
       bin/restore_backup;;
+    'S')
+      bin/restore_ssh_files;;
     'c')
       verify_homebrews
       verify_applications
+      verify_casks
+      verify_mas
       verify_extensions;;
     'C')
       caffeinate_machine;;

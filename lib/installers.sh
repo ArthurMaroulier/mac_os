@@ -7,7 +7,7 @@
 # Parameters:
 # $1 = The image path.
 mount_image() {
-  printf "Mounting image...\n"
+  printf "Mounting image $1...\n"
   hdiutil attach -quiet -nobrowse -noautoopen "$1"
 }
 export -f mount_image
@@ -16,7 +16,7 @@ export -f mount_image
 # Parameters:
 # $1 = The mount path.
 unmount_image() {
-  printf "Unmounting image...\n"
+  printf "Unmounting image $1...\n"
   hdiutil detach -force "$1"
 }
 export -f unmount_image
@@ -42,12 +42,12 @@ export -f download_installer
 # Parameters:
 # $1 = The URL.
 # $2 = The file name.
+# $3 = The HTTP header.
 download_only() {
   if [[ -e "$HOME/Downloads/$2" ]]; then
     printf "Downloaded: $2.\n"
   else
-    printf "Downloading $1...\n"
-    download_installer "$1" "$2"
+    download_installer "$1" "$2" "$3"
     mv "$MAC_OS_WORK_PATH/$2" "$HOME/Downloads"
   fi
 }
@@ -146,6 +146,7 @@ install_dmg_app() {
     mount_image "$MAC_OS_WORK_PATH/$download_file"
     install_app "$mount_point" "$app_name"
     unmount_image "$mount_point"
+    printf "Installed: $app_name.\n"
     verify_application "$app_name"
   fi
 }
@@ -154,7 +155,7 @@ export -f install_dmg_app
 # Installs a package via a DMG file.
 # Parameters:
 # $1 = The URL.
-# $2 = The mount path.
+# $2 = The volume name.
 # $3 = The application name.
 install_dmg_pkg() {
   local url="$1"

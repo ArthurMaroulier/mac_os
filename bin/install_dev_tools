@@ -6,9 +6,9 @@
 printf "Installing Xcode CLI tools...\n"
 xcode-select --install
 
-read -p "Have you completed the Xcode CLI tools install (y/n)? " response
-if [[ "$response" != "y" ]]; then
-  printf "ERROR: Xcode CLI tools must be installed before proceeding.\n"
+read -p "Have you completed the Xcode CLI tools install or already install Xcode and launched it at least once (y/n)? " response
+if [[ "$response" =~ ^([nN][oO]|[nN])$ ]]; then
+  printf "ERROR: Xcode must be launched it at least once if it is already installed or Xcode CLI tools must be installed before proceeding.\n"
   exit 1
 fi
 
